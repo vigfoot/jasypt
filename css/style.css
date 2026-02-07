@@ -13,6 +13,18 @@ body {
     padding: 20px;
 }
 
+textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #c9d1d9;
+    resize: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
 /* Main Container: Max-width 800px */
 .main-container {
     max-width: 800px;
@@ -219,4 +231,36 @@ input[type=number]:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* Quick Select Version Buttons */
+.version-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.btn-version {
+    flex: 1;
+    padding: 10px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    color: #8b949e;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-version:hover {
+    border-color: #007bff;
+    color: #ffffff;
+}
+
+/* 활성화된 버튼 스타일 (네온 블루) */
+.btn-version.active {
+    background: rgba(0, 123, 255, 0.1);
+    border-color: #007bff;
+    color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
 }

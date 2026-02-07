@@ -28,6 +28,7 @@
     <link rel="canonical" href="https://jasypt.forestfull.com">
     <link rel="stylesheet" href="css/style.css">
     <script defer src="js/script.js"></script>
+    <script defer src="js/crypto-js.min.js"></script>
     <title>Jasypt ForestFull | Encryptor/Decryptor</title>
 </head>
 <body>
@@ -41,18 +42,22 @@
     </header>
 
     <main class="card">
+
         <section class="config-section">
+            <label>Quick Select by Spring Boot Version</label>
+            <div class="version-selector">
+                <button type="button" class="btn-version" data-version="3.x">Spring Boot 3.x (Starter 3.0+)</button>
+                <button type="button" class="btn-version" data-version="2.x">Spring Boot 2.x (Starter 2.x-)</button>
+            </div>
+
             <div class="input-group">
                 <label for="algorithm">Algorithm</label>
-                <select id="algorithm">
-                    <option value="PBEWithHMACSHA512AndAES_256">PBEWithHMACSHA512AndAES_256 (Recommended)</option>
-                    <option value="PBEWithMD5AndDES">PBEWithMD5AndDES (Legacy)</option>
-                </select>
+                <select id="algorithm"></select>
             </div>
 
             <div class="input-group">
                 <label for="password">Secret Key (Password)</label>
-                <input type="password" id="password" placeholder="Enter encryption password...">
+                <input type="text" id="password" placeholder="Enter encryption password...">
             </div>
 
             <div class="row">
@@ -73,9 +78,15 @@
         <hr>
 
         <section class="io-section">
-            <div class="input-group">
-                <label for="inputText">Input Text</label>
-                <textarea id="inputText" rows="5" placeholder="Paste your plaintext or encrypted string here..."></textarea>
+            <div class="button-group">
+                <div class="input-group">
+                    <label for="encryptText">Encrypt Text</label>
+                    <textarea id="encryptText" rows="5" placeholder="Paste your plaintext here..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="decryptText">Decrypt Text</label>
+                    <textarea id="decryptText" rows="5" placeholder="Paste your encrypted string here..."></textarea>
+                </div>
             </div>
 
             <div class="button-group">
