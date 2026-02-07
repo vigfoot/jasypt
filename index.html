@@ -12,13 +12,13 @@
     <meta name="author" content="ForestFull">
     <meta name="robots" content="index, follow">
 
-    <meta property="og:title" content="Jasypt Online Encryption Tool - Chat ForestFull">
+    <meta property="og:title" content="Jasypt ForestFull | Encryptor/Decryptor">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://jasypt.forestfull.com">
     <meta property="og:image" content="https://jasypt.forestfull.com/images/forestfull.svg">
-    <meta property="og:image:alt" content="Preview of Chat ForestFull Jasypt Tool">
+    <meta property="og:image:alt" content="Preview of ForestFull Jasypt Tool">
     <meta property="og:description" content="The easiest and safest way to manage your Jasypt encrypted strings for Spring Boot projects.">
-    <meta property="og:site_name" content="Chat ForestFull">
+    <meta property="og:site_name" content="Jasypt ForestFull">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Jasypt Online Encryption Tool">
@@ -31,5 +31,71 @@
     <title>Jasypt ForestFull | Encryptor/Decryptor</title>
 </head>
 <body>
+<div class="main-container">
+    <header>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+            <img src="images/forestfull.svg" alt="Jasypt ForestFull Logo" class="logo">
+            <h1>Jasypt Online Tool</h1>
+        </div>
+        <p>Secure Client-Side Encryption/Decryption</p>
+    </header>
+
+    <main class="card">
+        <section class="config-section">
+            <div class="input-group">
+                <label for="algorithm">Algorithm</label>
+                <select id="algorithm">
+                    <option value="PBEWithHMACSHA512AndAES_256">PBEWithHMACSHA512AndAES_256 (Recommended)</option>
+                    <option value="PBEWithMD5AndDES">PBEWithMD5AndDES (Legacy)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Secret Key (Password)</label>
+                <input type="password" id="password" placeholder="Enter encryption password...">
+            </div>
+
+            <div class="row">
+                <div class="input-group">
+                    <label for="iterations">Iterations</label>
+                    <input type="number" id="iterations" value="1000">
+                </div>
+                <div class="input-group">
+                    <label for="saltGenerator">Salt Generator</label>
+                    <select id="saltGenerator">
+                        <option value="random">Random Salt Generator</option>
+                        <option value="fixed">Fixed (Not Recommended)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section class="io-section">
+            <div class="input-group">
+                <label for="inputText">Input Text</label>
+                <textarea id="inputText" rows="5" placeholder="Paste your plaintext or encrypted string here..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button id="encryptBtn" class="btn-primary">Encrypt</button>
+                <button id="decryptBtn" class="btn-secondary">Decrypt</button>
+            </div>
+
+            <div class="input-group">
+                <label for="outputText">Result</label>
+                <div class="result-wrapper">
+                    <textarea id="outputText" rows="5" readonly placeholder="Result will appear here..."></textarea>
+                    <button id="copyBtn" class="btn-copy">Copy</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 ForestFull. Licensed under MIT.</p>
+    </footer>
+</div>
 </body>
 </html>

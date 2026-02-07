@@ -1,247 +1,222 @@
-/*! HTML5 Boilerplate v9.0.1 | MIT License | https://html5boilerplate.com/ */
-
-/* main.css 3.0.0 | MIT License | https://github.com/h5bp/main.css#readme */
-/*
- * What follows is the result of much research on cross-browser styling.
- * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
- * Kroc Camen, and the H5BP dev community and team.
- */
-
-/* ==========================================================================
-   Base styles: opinionated defaults
-   ========================================================================== */
-
-html {
-  color: #222;
-  font-size: 1em;
-  line-height: 1.4;
+/* General Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-/*
- * Remove text-shadow in selection highlight:
- * https://twitter.com/miketaylr/status/12228805301
- *
- * Customize the background color to match your design.
- */
-
-::-moz-selection {
-  background: #b3d4fc;
-  text-shadow: none;
+body {
+    /* 사이버틱한 다크 배경 */
+    background-color: #0b0e14;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #e0e6ed;
+    padding: 20px;
 }
 
-::selection {
-  background: #b3d4fc;
-  text-shadow: none;
+/* Main Container: Max-width 800px */
+.main-container {
+    max-width: 800px;
+    margin: 40px auto;
+    width: 100%;
 }
 
-/*
- * A better looking default horizontal rule
- */
+/* Header & Logo */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo {
+    width: 2.5rem;
+    height: auto;
+    display: block;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+header p {
+    color: #8892b0;
+    margin-top: 8px;
+    font-size: 0.95rem;
+}
+
+/* Cyber Card Style */
+.card {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #30363d;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
 
 hr {
-  display: block;
-  height: 1px;
-  border: 0;
-  border-top: 1px solid #ccc;
-  margin: 1em 0;
-  padding: 0;
+    border: 0;
+    border-top: 1px solid #30363d;
+    margin: 25px 0;
 }
 
-/*
- * Remove the gap between audio, canvas, iframes,
- * images, videos and the bottom of their containers:
- * https://github.com/h5bp/html5-boilerplate/issues/440
- */
-
-audio,
-canvas,
-iframe,
-img,
-svg,
-video {
-  vertical-align: middle;
+/* Form Elements */
+.row {
+    display: flex;
+    gap: 20px;
 }
 
-/*
- * Remove default fieldset styles.
- */
-
-fieldset {
-  border: 0;
-  margin: 0;
-  padding: 0;
+.input-group {
+    margin-bottom: 20px;
+    flex: 1;
 }
 
-/*
- * Allow only vertical resizing of textareas.
- */
-
-textarea {
-  resize: vertical;
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-
-/* ==========================================================================
-   Helper classes
-   ========================================================================== */
-
-/*
- * Hide visually and from screen readers
- */
-
-.hidden,
-[hidden] {
-  display: none !important;
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #c9d1d9;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/*
- * Hide only visually, but have it available for screen readers:
- * https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
- *
- * 1. For long content, line feeds are not interpreted as spaces and small width
- *    causes content to wrap 1 word per line:
- *    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
- */
-
-.visually-hidden {
-  border: 0;
-  clip: rect(0, 0, 0, 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-  /* 1 */
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
 
-/*
- * Extends the .visually-hidden class to allow the element
- * to be focusable when navigated to via the keyboard:
- * https://www.drupal.org/node/897638
- */
+/* Mobile Optimization */
+@media (max-width: 600px) {
+    .row {
+        flex-direction: column;
+        gap: 0;
+    }
 
-.visually-hidden.focusable:active,
-.visually-hidden.focusable:focus {
-  clip: auto;
-  height: auto;
-  margin: 0;
-  overflow: visible;
-  position: static;
-  white-space: inherit;
-  width: auto;
+    .card {
+        padding: 20px;
+    }
 }
 
-/*
- * Hide visually and from screen readers, but maintain layout
- */
-
-.invisible {
-  visibility: hidden;
+/* Cyber Buttons (Black & Neon Blue) */
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin: 25px 0;
 }
 
-/*
- * Clearfix: contain floats
- *
- * The use of `table` rather than `block` is only necessary if using
- * `::before` to contain the top-margins of child elements.
- */
-
-.clearfix::before,
-.clearfix::after {
-  content: "";
-  display: table;
+button {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.clearfix::after {
-  clear: both;
+/* 흑색 버튼 (Black/Dark) */
+.btn-secondary {
+    background: #21262d;
+    color: #c9d1d9;
 }
 
-/* ==========================================================================
-   EXAMPLE Media Queries for Responsive Design.
-   These examples override the primary ('mobile first') styles.
-   Modify as content requires.
-   ========================================================================== */
-
-@media only screen and (min-width: 35em) {
-  /* Style adjustments for viewports that meet the condition */
+.btn-secondary:hover {
+    background: #30363d;
+    border-color: #8b949e;
 }
 
-@media print,
-  (-webkit-min-device-pixel-ratio: 1.25),
-  (min-resolution: 1.25dppx),
-  (min-resolution: 120dpi) {
-  /* Style adjustments for high resolution devices */
+/* 사이버틱 블루 버튼 (Cyber Blue) */
+.btn-primary {
+    background: #007bff;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
 }
 
-/* ==========================================================================
-   Print styles.
-   Inlined to avoid the additional HTTP request:
-   https://www.phpied.com/delay-loading-your-print-css/
-   ========================================================================== */
-
-@media print {
-  *,
-  *::before,
-  *::after {
-    background: #fff !important;
-    color: #000 !important;
-    /* Black prints faster */
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-
-  a,
-  a:visited {
-    text-decoration: underline;
-  }
-
-  a[href]::after {
-    content: " (" attr(href) ")";
-  }
-
-  abbr[title]::after {
-    content: " (" attr(title) ")";
-  }
-
-  /*
-   * Don't show links that are fragment identifiers,
-   * or use the `javascript:` pseudo protocol
-   */
-  a[href^="#"]::after,
-  a[href^="javascript:"]::after {
-    content: "";
-  }
-
-  pre {
-    white-space: pre-wrap !important;
-  }
-
-  pre,
-  blockquote {
-    border: 1px solid #999;
-    page-break-inside: avoid;
-  }
-
-  tr,
-  img {
-    page-break-inside: avoid;
-  }
-
-  p,
-  h2,
-  h3 {
-    orphans: 3;
-    widows: 3;
-  }
-
-  h2,
-  h3 {
-    page-break-after: avoid;
-  }
+.btn-primary:hover {
+    background: #0056b3;
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
 }
 
+/* Result Area */
+.result-wrapper {
+    position: relative;
+}
+
+textarea[readonly] {
+    background-color: #090c10;
+    color: #58a6ff; /* 결과값은 파란색 계열로 강조 */
+    border-style: dashed;
+}
+
+.btn-copy {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    background: #21262d;
+    color: #8b949e;
+    width: auto;
+    flex: none;
+}
+
+.btn-copy:hover {
+    color: #ffffff;
+    background: #30363d;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #484f58;
+    font-size: 0.85rem;
+}
+
+/* 1. 기본 화살표 제거 (Chrome, Safari, Edge, Opera) */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 2. 기본 화살표 제거 (Firefox) */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* 3. 인풋 넘버 스타일 동기화 (기타 입력창과 동일하게) */
+input[type=number] {
+    width: 100%;
+    padding: 12px;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #c9d1d9;
+    /* 숫자가 오른쪽으로 치우치지 않게 가운데나 왼쪽 정렬 */
+    text-align: left;
+}
+
+/* 포커스 시 효과 유지 */
+input[type=number]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
