@@ -16,7 +16,12 @@ async function init() {
             selectEl.add(new Option(algorithms[id].name, id));
         });
 
-        if (Object.keys(algorithms).length > 0) onSelectAlgorithm(selectEl.value);
+        // 초기 실행 시 딱 한 번만 UI 업데이트
+        if (Object.keys(algorithms).length > 0) {
+            updateUIByAlgorithm(selectEl.value);
+        }
+
+        // 이벤트 리스너는 여기서 딱 한 번만 등록
         attachEventListeners();
     } catch (error) {
         console.error("Init Error:", error);
@@ -28,32 +33,75 @@ function attachEventListeners() {
     const versionBtns = document.querySelectorAll('.btn-version');
 
     versionBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+        // 기존 리스너가 중복되지 않도록 방어 로직 (익명함수 대신 명확한 처리)
+        btn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation(); // 이벤트 버블링 방지
+
             const target = btn.getAttribute('data-version');
-            versionBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
             const id = Object.keys(algorithms).find(k => algorithms[k].springBootDefault === target);
+
             if (id) {
                 selectEl.value = id;
-                onSelectAlgorithm(id);
+                updateUIByAlgorithm(id);
             }
-        });
+        };
     });
 
-    selectEl.addEventListener('change', (e) => {
-        onSelectAlgorithm(e.target.value);
-        versionBtns.forEach(b => b.classList.remove('active'));
+    selectEl.onchange = (e) => {
+        updateUIByAlgorithm(e.target.value);
+    };
+
+    document.getElementById('encryptBtn').onclick = () => handleAction('encrypt');
+    document.getElementById('decryptBtn').onclick = () => handleAction('decrypt');
+    document.getElementById('copyBtn').onclick = () => copyToClipboard();
+}
+
+/**
+ * 3. 알고리즘 선택 시 UI 업데이트 (기존 onSelectAlgorithm 역할)
+ */
+function updateUIByAlgorithm(id) {
+    const selected = algorithms[id];
+    if (!selected) return;
+
+    // 1. Iterations 세팅
+    const iterInput = document.getElementById('iterations');
+    iterInput.value = selected.defaultIterations;
+
+    // 2. 버전 버튼 하이라이트 (버블링 이슈를 피하기 위해 클래스만 깔끔하게 교체)
+    const versionBtns = document.querySelectorAll('.btn-version');
+    versionBtns.forEach(btn => {
+        const btnVersion = btn.getAttribute('data-version');
+        if (selected.springBootDefault === btnVersion) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
     });
 
-    document.getElementById('encryptBtn').addEventListener('click', () => handleAction('encrypt'));
-    document.getElementById('decryptBtn').addEventListener('click', () => handleAction('decrypt'));
-    document.getElementById('copyBtn').addEventListener('click', () => copyToClipboard());
+    console.log(`[UI Sync] Algorithm: ${id}, Version: ${selected.springBootDefault}`);
 }
 
 function onSelectAlgorithm(id) {
     const selected = algorithms[id];
     if (selected) {
-        document.getElementById('iterations').value = selected.defaultIterations;
+        // 1. Iterations 자동 세팅
+        const iterInput = document.getElementById('iterations');
+        iterInput.value = selected.defaultIterations;
+
+        // 2. 버전 버튼 액티브 처리 (추가된 로직)
+        const versionBtns = document.querySelectorAll('.btn-version');
+        versionBtns.forEach(btn => {
+            const btnVersion = btn.getAttribute('data-version');
+            // 현재 선택된 알고리즘의 springBootDefault 값과 버튼의 버전이 일치하면 active 추가
+            if (selected.springBootDefault === btnVersion) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        console.log(`[Algorithm Selected] ID: ${id} | Sync Version: ${selected.springBootDefault || 'None'}`);
     }
 }
 
@@ -213,4 +261,4 @@ function copyToClipboard() {
     setTimeout(() => btn.innerText = "Copy", 2000);
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', init, { once: true });
