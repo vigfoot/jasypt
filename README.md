@@ -54,3 +54,9 @@
 │   └── script.js      # Jasypt 호환 암/복호화 핵심 로직
 └── data/
     └── jasypt_algorithms.json  # 알고리즘 메타데이터
+```
+
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](https://jasypt.forestfull.com/LICENSE.txt) file for details.
+
+Developed by [HyeonSeok Ko/Vigfoot] ForestFull: Making Security Simple.
