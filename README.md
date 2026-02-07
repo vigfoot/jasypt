@@ -1,12 +1,11 @@
 # 🍃 Jasypt ForestFull
+
 > **Online Jasypt Encryption & Decryption Tool for Spring Boot Developers**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x%20%2F%202.x-brightgreen)](https://spring.io/projects/spring-boot)
 
 **Jasypt ForestFull**은 Spring Boot 환경에서 프로퍼티 암호화에 사용되는 Jasypt 알고리즘을 웹에서 간편하게 테스트하고 생성할 수 있는 도구입니다. 복잡한 Java 코드 실행 없이 브라우저에서 즉시 암/복호화 결과를 확인할 수 있습니다.
-
-
 
 ---
 
@@ -24,13 +23,13 @@
 
 ## 🚀 How to Use
 
-1.  **Select Version**: 사용 중인 Spring Boot 버전에 맞춰 `3.x` 또는 `2.x` 버튼을 클릭하세요.
-2.  **Input Credentials**:
+1. **Select Version**: 사용 중인 Spring Boot 버전에 맞춰 `3.x` 또는 `2.x` 버튼을 클릭하세요.
+2. **Input Credentials**:
     * `Secret Key`: Jasypt 설정에 사용한 비밀키를 입력합니다.
     * `Iterations`: 반복 횟수를 확인합니다 (기본값: 1000).
-3.  **Encrypt/Decrypt**:
+3. **Encrypt/Decrypt**:
     * 암호화할 평문을 입력하거나, 복호화할 `ENC(...)` 내부 문자열을 입력합니다.
-4.  **Copy Result**: 결과창의 `Copy` 버튼을 눌러 즉시 클립보드에 복사하세요.
+4. **Copy Result**: 결과창의 `Copy` 버튼을 눌러 즉시 클립보드에 복사하세요.
 
 ---
 
@@ -57,6 +56,7 @@
 ```
 
 ## 📜 License
+
 This project is licensed under the MIT License - see the [LICENSE](https://jasypt.forestfull.com/LICENSE.txt) file for details.
 
 Developed by [HyeonSeok Ko/Vigfoot] ForestFull: Making Security Simple.
