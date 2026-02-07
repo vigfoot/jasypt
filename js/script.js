@@ -1,157 +1,113 @@
 let algorithms = {};
-const HOST_URL = location.host.indexOf('localhost') !== -1 ? '/jasypt' : ''
+const HOST_URL = location.host.indexOf('localhost') !== -1 ? '/jasypt' : '';
 
 /**
- * 1. 초기화 함수: 데이터 로드 및 UI 구성
+ * 1. 초기화 및 이벤트 바인딩
  */
 async function init() {
     try {
         const response = await fetch(`${HOST_URL}/data/jasypt_algorithms.json`);
-        if (!response.ok) throw new Error("Failed to load algorithm data.");
-
+        if (!response.ok) throw new Error("Failed to load data.");
         algorithms = await response.json();
 
         const selectEl = document.getElementById('algorithm');
-
-        // 기존 하드코딩된 옵션이 있다면 제거 (Optional)
         selectEl.innerHTML = '';
-
-        // Object.keys를 순회하며 옵션 동적 생성
         Object.keys(algorithms).forEach(id => {
-            const algo = algorithms[id];
-            const option = new Option(algo.name, id);
-
-            // 데이터셋 기반으로 추가 정보(Spring version 등)를 속성에 넣을 수 있음
-            option.title = algo.description;
-            selectEl.add(option);
+            selectEl.add(new Option(algorithms[id].name, id));
         });
 
-        // 초기 로드 시 첫 번째 알고리즘의 설정값 반영
-        if (Object.keys(algorithms).length > 0) {
-            onSelectAlgorithm(selectEl.value);
-        }
-
-        // 이벤트 리스너 주입
+        if (Object.keys(algorithms).length > 0) onSelectAlgorithm(selectEl.value);
         attachEventListeners();
-
     } catch (error) {
-        console.error("Initialization Error:", error);
-        alert("Critical error: Could not load encryption configurations.");
+        console.error("Init Error:", error);
     }
 }
 
-/**
- * 2. 이벤트 리스너 주입 (Event Binding)
- */
 function attachEventListeners() {
     const selectEl = document.getElementById('algorithm');
-    const encryptBtn = document.getElementById('encryptBtn');
-    const decryptBtn = document.getElementById('decryptBtn');
-    const copyBtn = document.getElementById('copyBtn');
     const versionBtns = document.querySelectorAll('.btn-version');
 
-    // 버전 퀵 셀렉트 버튼 이벤트
     versionBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            const targetVersion = btn.getAttribute('data-version');
-
-            // 모든 버튼에서 active 제거 후 클릭한 버튼에 추가
+            const target = btn.getAttribute('data-version');
             versionBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            // JSON 데이터를 뒤져서 해당 버전의 기본 알고리즘 찾기
-            const defaultAlgoId = Object.keys(algorithms).find(id =>
-                algorithms[id].springBootDefault === targetVersion
-            );
-
-            if (defaultAlgoId) {
-                selectEl.value = defaultAlgoId;
-                onSelectAlgorithm(defaultAlgoId);
+            const id = Object.keys(algorithms).find(k => algorithms[k].springBootDefault === target);
+            if (id) {
+                selectEl.value = id;
+                onSelectAlgorithm(id);
             }
         });
     });
 
-    // 알고리즘 선택 변경 시
     selectEl.addEventListener('change', (e) => {
         onSelectAlgorithm(e.target.value);
+        versionBtns.forEach(b => b.classList.remove('active'));
     });
 
-    // 암호화 버튼
-    encryptBtn.addEventListener('click', () => {
-        handleAction('encrypt');
-    });
-
-    // 복호화 버튼
-    decryptBtn.addEventListener('click', () => {
-        handleAction('decrypt');
-    });
-
-    // 복사 버튼
-    copyBtn.addEventListener('click', () => {
-        copyToClipboard();
-    });
+    document.getElementById('encryptBtn').addEventListener('click', () => handleAction('encrypt'));
+    document.getElementById('decryptBtn').addEventListener('click', () => handleAction('decrypt'));
+    document.getElementById('copyBtn').addEventListener('click', () => copyToClipboard());
 }
 
-/**
- * 3. 알고리즘 선택 시 UI 업데이트
- */
 function onSelectAlgorithm(id) {
     const selected = algorithms[id];
     if (selected) {
-        // Iterations 자동 세팅
-        const iterInput = document.getElementById('iterations');
-        iterInput.value = selected.defaultIterations;
-
-        // 콘솔 및 로그 확인 (나중에 UI에 Spring 버전을 표시할 수도 있음)
-        console.log(`[Algorithm Selected] ID: ${id} | Spring Boot: ${selected.springBootVersion}`);
+        document.getElementById('iterations').value = selected.defaultIterations;
     }
 }
 
 /**
- * 4. 암/복호화 핸들러 (Jasypt 호환 로직)
+ * 2. 통합 핸들러
  */
 function handleAction(mode) {
     const password = document.getElementById('password').value;
-    const inputText = document.getElementById('inputText').value.trim();
     const algorithmId = document.getElementById('algorithm').value;
     const iterations = parseInt(document.getElementById('iterations').value);
     const resultArea = document.getElementById('outputText');
-
-    if (!password || !inputText) {
-        alert("Please enter both the Secret Key and Input Text.");
-        return;
-    }
+    const algoInfo = algorithms[algorithmId];
 
     try {
-        if (mode === 'encrypt') {
-            const encrypted = jasyptEncrypt(inputText, password, iterations, algorithmId);
-            resultArea.value = encrypted;
-        } else {
-            const decrypted = jasyptDecrypt(inputText, password, iterations, algorithmId);
-            resultArea.value = decrypted;
+        const inputId = mode === 'encrypt' ? 'encryptText' : 'decryptText';
+        const inputText = document.getElementById(inputId).value.trim();
+
+        if (!password || !inputText) {
+            alert("Please enter Secret Key and Input Text.");
+            return;
         }
+
+        let result = "";
+        if (algoInfo.category === "Modern") {
+            result = mode === 'encrypt'
+                ? jasyptEncryptModern(inputText, password, iterations)
+                : jasyptDecryptModern(inputText, password, iterations);
+        } else {
+            result = mode === 'encrypt'
+                ? jasyptEncryptLegacy(inputText, password, iterations, algorithmId)
+                : jasyptDecryptLegacy(inputText, password, iterations, algorithmId);
+        }
+
+        resultArea.value = result;
     } catch (e) {
-        console.error(e);
-        alert("Operation failed. Please check your Secret Key or Algorithm compatibility.");
-        resultArea.value = "ERROR: Could not process the data.";
+        console.error("Action Error:", e);
+        resultArea.value = "ERROR: Decryption failed. Possible wrong password or salt mismatch.";
     }
 }
 
 /**
- * Jasypt 호환 암호화 로직 (AES-256 기준)
+ * 3. Modern 로직 (AES-256)
  */
-function jasyptEncrypt(plainText, password, iterations, algoId) {
-    const salt = CryptoJS.lib.WordArray.random(16); // 16-byte random salt
-    const iv = CryptoJS.lib.WordArray.random(16);   // 16-byte random IV
+function jasyptEncryptModern(text, pass, iter) {
+    const salt = CryptoJS.lib.WordArray.random(16);
+    const iv = CryptoJS.lib.WordArray.random(16);
 
-    // PBKDF2를 이용한 키 생성 (Jasypt 방식)
-    const key = CryptoJS.PBKDF2(password, salt, {
+    const key = CryptoJS.PBKDF2(pass, salt, {
         keySize: 256 / 32,
-        iterations: iterations,
+        iterations: iter,
         hasher: CryptoJS.algo.SHA512
     });
 
-    const encrypted = CryptoJS.AES.encrypt(plainText, key, {
+    const encrypted = CryptoJS.AES.encrypt(text, key, {
         iv: iv,
         padding: CryptoJS.pad.Pkcs7,
         mode: CryptoJS.mode.CBC
@@ -162,20 +118,28 @@ function jasyptEncrypt(plainText, password, iterations, algoId) {
     return combined.toString(CryptoJS.enc.Base64);
 }
 
-/**
- * Jasypt 호환 복호화 로직
- */
-function jasyptDecrypt(base64Text, password, iterations, algoId) {
-    const encryptedFull = CryptoJS.enc.Base64.parse(base64Text);
+function jasyptDecryptModern(base64, pass, iter) {
+    const encryptedFull = CryptoJS.enc.Base64.parse(base64);
 
-    // Salt와 IV 추출 (앞선 32바이트)
-    const salt = CryptoJS.lib.WordArray.create(encryptedFull.words.slice(0, 4));
-    const iv = CryptoJS.lib.WordArray.create(encryptedFull.words.slice(4, 8));
-    const ciphertext = CryptoJS.lib.WordArray.create(encryptedFull.words.slice(8));
+    // 16바이트(128비트)씩 정확히 추출하기 위한 helper
+    const extract = (wordArray, startByte, lengthByte) => {
+        const startWord = startByte / 4;
+        const endWord = (startByte + lengthByte) / 4;
+        const newWords = wordArray.words.slice(startWord, endWord);
+        return CryptoJS.lib.WordArray.create(newWords, lengthByte);
+    };
 
-    const key = CryptoJS.PBKDF2(password, salt, {
+    // Jasypt 구조 분해: Salt(16) | IV(16) | Ciphertext(rest)
+    const salt = extract(encryptedFull, 0, 16);
+    const iv = extract(encryptedFull, 16, 16);
+    const ciphertext = CryptoJS.lib.WordArray.create(
+        encryptedFull.words.slice(8),
+        encryptedFull.sigBytes - 32
+    );
+
+    const key = CryptoJS.PBKDF2(pass, salt, {
         keySize: 256 / 32,
-        iterations: iterations,
+        iterations: iter,
         hasher: CryptoJS.algo.SHA512
     });
 
@@ -186,25 +150,67 @@ function jasyptDecrypt(base64Text, password, iterations, algoId) {
     });
 
     const result = decrypted.toString(CryptoJS.enc.Utf8);
-    if (!result) throw new Error("Invalid password or corrupted data.");
+
+    // 복호화 결과 검증
+    if (!result || result.length === 0) {
+        throw new Error("Decryption failed. Check password or IV/Salt structure.");
+    }
+
     return result;
 }
 
 /**
- * 5. 결과값 복사 기능
+ * 4. Legacy 로직 보강 (DES/3DES 대응)
  */
-function copyToClipboard() {
-    const outputText = document.getElementById('outputText');
-    if (!outputText.value) return;
-
-    outputText.select();
-    document.execCommand('copy'); // 최신 브라우저는 navigator.clipboard.writeText 추천
-
-    const copyBtn = document.getElementById('copyBtn');
-    const originalText = copyBtn.innerText;
-    copyBtn.innerText = "Done!";
-    setTimeout(() => copyBtn.innerText = originalText, 2000);
+function getLegacyConfig(algoId) {
+    if (algoId.includes("TripleDES") || algoId.includes("DESede")) {
+        return {cipher: CryptoJS.TripleDES, keyLen: 24, ivLen: 8};
+    }
+    return {cipher: CryptoJS.DES, keyLen: 8, ivLen: 8};
 }
 
-// DOM 로드 완료 후 실행
+// Jasypt StandardPBE 키 유도 로직 (핵심)
+function deriveLegacyKey(pass, salt, iter, keyLen, ivLen) {
+    let passwordBytes = CryptoJS.enc.Latin1.parse(pass);
+    let data = passwordBytes.concat(salt);
+
+    let hash = CryptoJS.MD5(data);
+    for (let i = 1; i < iter; i++) {
+        hash = CryptoJS.MD5(hash);
+    }
+
+    const key = CryptoJS.lib.WordArray.create(hash.words.slice(0, keyLen / 4));
+    const iv = CryptoJS.lib.WordArray.create(hash.words.slice(keyLen / 4, (keyLen + ivLen) / 4));
+
+    return {key, iv};
+}
+
+function jasyptEncryptLegacy(text, pass, iter, id) {
+    const config = getLegacyConfig(id);
+    const salt = CryptoJS.lib.WordArray.random(8);
+    const derived = deriveLegacyKey(pass, salt, iter, config.keyLen, config.ivLen);
+    const enc = config.cipher.encrypt(text, derived.key, {iv: derived.iv, padding: CryptoJS.pad.Pkcs7, mode: CryptoJS.mode.CBC});
+    return salt.clone().concat(enc.ciphertext).toString(CryptoJS.enc.Base64);
+}
+
+function jasyptDecryptLegacy(base64, pass, iter, id) {
+    const config = getLegacyConfig(id);
+    const full = CryptoJS.enc.Base64.parse(base64);
+    const salt = CryptoJS.lib.WordArray.create(full.words.slice(0, 2)); // 8 bytes
+    const cipher = CryptoJS.lib.WordArray.create(full.words.slice(2));
+    const derived = deriveLegacyKey(pass, salt, iter, config.keyLen, config.ivLen);
+
+    const dec = config.cipher.decrypt({ciphertext: cipher}, derived.key, {iv: derived.iv, padding: CryptoJS.pad.Pkcs7, mode: CryptoJS.mode.CBC});
+    return dec.toString(CryptoJS.enc.Utf8);
+}
+
+function copyToClipboard() {
+    const val = document.getElementById('outputText').value;
+    if (!val || val === "ERROR") return;
+    navigator.clipboard.writeText(val);
+    const btn = document.getElementById('copyBtn');
+    btn.innerText = "Done!";
+    setTimeout(() => btn.innerText = "Copy", 2000);
+}
+
 document.addEventListener('DOMContentLoaded', init);
